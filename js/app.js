@@ -358,12 +358,20 @@ render();
   addEventListener('hashchange',()=>{last=0});
 })();
 
-/* banner auto-scroll: every 3.5s, loops back to first, pauses 6s after touch/wheel */
-(function(){let hold=0;const h=()=>{hold=Date.now()+6000};
+/* banner: infinite auto-scroll, active card centered; touch/wheel pauses 6s */
+(function(){let hold=0,tick=0;const h=()=>{hold=Date.now()+6000};
   ['touchstart','pointerdown','wheel'].forEach(e=>addEventListener(e,h,{passive:true}));
-  setInterval(()=>{const b=document.querySelector('.banners');
-    if(!b||!b.firstElementChild||document.hidden||Date.now()<hold||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-    const max=b.scrollWidth-b.clientWidth,step=b.firstElementChild.offsetWidth+10;
-    b.scrollTo({left:b.scrollLeft>=max-4?0:b.scrollLeft+step,behavior:'smooth'})},3500)})();
+  const geo=b=>{const a=b.children[0].getBoundingClientRect(),r=b.getBoundingClientRect();
+    return{step:b.children[1].getBoundingClientRect().left-a.left,base:b.scrollLeft+a.left-r.left-(b.clientWidth-a.width)/2}};
+  const fix=b=>{const n=+b.dataset.n,g=geo(b),i=Math.round((b.scrollLeft-g.base)/g.step);
+    if(i<n)b.scrollLeft+=n*g.step;else if(i>=2*n)b.scrollLeft-=n*g.step};
+  const init=b=>{const src=[...b.children];b.dataset.n=src.length;b.dataset.loop=1;if(src.length<2)return;
+    for(let k=0;k<2;k++)src.forEach(x=>{const c=x.cloneNode(true);c.alt='';b.appendChild(c)});
+    const g=geo(b);b.scrollLeft=g.base+src.length*g.step;
+    let t;b.addEventListener('scroll',()=>{clearTimeout(t);t=setTimeout(()=>fix(b),120)},{passive:true})};
+  setInterval(()=>{const b=document.querySelector('.banners');if(!b||!b.children.length)return;
+    if(!b.dataset.loop){init(b);tick=0;return}
+    if(b.children.length<2||++tick<14||document.hidden||Date.now()<hold||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+    tick=0;b.scrollTo({left:b.scrollLeft+geo(b).step,behavior:'smooth'})},250)})();
 
 if('serviceWorker' in navigator&&(location.protocol=='https:'||location.hostname=='localhost'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
