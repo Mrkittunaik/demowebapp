@@ -205,3 +205,8 @@ img{display:block;max-width:100%}
 .bar{height:8px;background:var(--line);border-radius:3px;margin:14px 0 6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--g500)}
 .stars{display:flex;gap:4px;margin-top:10px}.stars button{color:#cfd6d1}.stars button.on{color:#f5a623}.stars button.on svg{fill:#f5a623}
 button[disabled]{opacity:.5;cursor:not-allowed}
+
+a{color:inherit;text-decoration:none}
+.tab{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.tab .ic{flex:none}
+.cat img{object-fit:cover;display:block}
