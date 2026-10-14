@@ -34,7 +34,7 @@ img{display:block;max-width:100%}
 /* banners */
 .banners{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px;scrollbar-width:none}
 .banners::-webkit-scrollbar,.hs::-webkit-scrollbar,.tabs::-webkit-scrollbar{display:none}
-.banners img{width:86%;flex:none;border-radius:3px;box-shadow:var(--sh);scroll-snap-align:start}
+.banners img{width:86%;flex:none;aspect-ratio:12/5;object-fit:cover;border-radius:3px;box-shadow:var(--sh);scroll-snap-align:start}
 
 /* categories */
 .cats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
