@@ -1,9 +1,11 @@
 const $=s=>document.querySelector(s);
 const inr=n=>'₹'+n.toLocaleString('en-IN');
-const P=id=>PRODUCTS.find(p=>p.id==id);
+const PMAP=new Map(PRODUCTS.map(p=>[String(p.id),p]));
+const P=id=>PMAP.get(String(id));
 let cart=JSON.parse(localStorage.getItem('cart')||'{}');
 let favs=JSON.parse(localStorage.getItem('favs')||'[]');
-const save=()=>{localStorage.setItem('cart',JSON.stringify(cart));localStorage.setItem('favs',JSON.stringify(favs))};
+let _sv=0;const save=()=>{if(_sv)return;_sv=setTimeout(()=>{_sv=0;try{localStorage.setItem('cart',JSON.stringify(cart));localStorage.setItem('favs',JSON.stringify(favs))}catch(e){}},250)};
+addEventListener('pagehide',()=>{try{localStorage.setItem('cart',JSON.stringify(cart));localStorage.setItem('favs',JSON.stringify(favs))}catch(e){}});
 const count=()=>Object.values(cart).reduce((a,b)=>a+b,0);
 const total=()=>Object.entries(cart).reduce((a,[id,q])=>a+P(id).price*q,0);
 const mrpTotal=()=>Object.entries(cart).reduce((a,[id,q])=>a+P(id).mrp*q,0);
@@ -27,7 +29,7 @@ function addBtn(p){const q=cart[p.id]||0;
           :`<button class="add" data-act="inc" data-id="${p.id}" aria-label="Add to cart">${ic('plus',16)}</button>`}
 function card(p){const off=p.mrp-p.price;
   return `<div class="pc" data-quick="${p.id}">
-   <div class="pi"><img src="${p.img}" alt="${p.name}" loading="lazy">${off>0?`<span class="pc-badge">${Math.round(off/p.mrp*100)}% OFF</span>`:''}
+   <div class="pi"><img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async" width="132" height="132">${off>0?`<span class="pc-badge">${Math.round(off/p.mrp*100)}% OFF</span>`:''}
      <button class="fav ${favs.includes(p.id)?'on':''}" data-act="fav" data-id="${p.id}" aria-label="Wishlist">${ic('heart',14)}</button>
      <span data-slot="${p.id}">${addBtn(p)}</span></div>
    <div class="price"><span class="pill">${inr(p.price)}</span>${off>0?`<span class="mrp">${inr(p.mrp)}</span>`:''}</div>
@@ -44,15 +46,15 @@ home(){
      <button class="addr" data-act="addr">${ic('pin',13)} ${esc(curAddr()?addrShort(curAddr()):'Set delivery location')} ${ic('down',14)}</button></div>
      <button class="avatar" data-go="#/profile" aria-label="Profile">${ic('user',20)}</button></div>
      <button class="search" data-act="search">${ic('search',18)}<span>Search "tomato"</span></button></div>
-   <div class="banners">${BANNERS.map(b=>`<img src="${b}" alt="Offer">`).join('')}</div>
+   <div class="banners">${BANNERS.map(b=>`<img src="${b}" alt="Offer" decoding="async">`).join('')}</div>
    <div class="sec" style="padding-top:4px"><div class="sec-h"><h2>Shop by category</h2><a class="link" href="#/categories">See all ${ic('chev',12)}</a></div>
-     <div class="cats">${CATEGORIES.map(c=>`<button class="cat" data-go="#/shop/${c.slug}"><img src="${c.img}" alt=""><b>${c.name}</b></button>`).join('')}</div></div>
+     <div class="cats">${CATEGORIES.map(c=>`<button class="cat" data-go="#/shop/${c.slug}"><img src="${c.img}" alt="" decoding="async" width="100" height="100"><b>${c.name}</b></button>`).join('')}</div></div>
    ${['veg','fruit','dairy'].map(s=>{const c=CATEGORIES.find(x=>x.slug==s);return `<div class="sec"><div class="sec-h"><h2>${c.name}</h2><a class="link" href="#/shop/${s}">Shop all ${ic('chev',12)}</a></div><div class="hs">${by(s).map(card).join('')}</div></div>`}).join('')}
    <div class="sec"><div class="sec-h"><h2>Best deals</h2></div><div class="grid2">${[...PRODUCTS].sort((a,b)=>(b.mrp-b.price)/b.mrp-(a.mrp-a.price)/a.mrp).slice(0,6).map(card).join('')}</div></div>
    <div class="trust"><div>${ic('bolt',18)}Fast delivery</div><div>${ic('shield',18)}Quality checked</div><div>${ic('tag',18)}Best prices</div></div>`},
 
 categories(){
-  return `${pageTop('Categories')}<div class="sec" style="padding-top:14px"><div class="cats">${CATEGORIES.map(c=>`<button class="cat" data-go="#/shop/${c.slug}"><img src="${c.img}" alt=""><b>${c.name}</b></button>`).join('')}</div></div>`},
+  return `${pageTop('Categories')}<div class="sec" style="padding-top:14px"><div class="cats">${CATEGORIES.map(c=>`<button class="cat" data-go="#/shop/${c.slug}"><img src="${c.img}" alt="" decoding="async" width="100" height="100"><b>${c.name}</b></button>`).join('')}</div></div>`},
 
 shop(slug){
   const c=CATEGORIES.find(x=>x.slug==slug)||{name:'All products',slug:'all'};
@@ -82,7 +84,7 @@ cart(){
   return `${pageTop('Cart',`<button class="ib" data-act="addr" aria-label="Address">${ic('pin',18)}</button>`)}
    <div class="save">${ic('tag',18)} Yay! You saved ${inr(saved)} on this order</div>
    <div class="card" style="margin:12px 14px 0"><div class="row" style="padding:12px;border-bottom:1px solid var(--line)">${ic('clock',20,'')}<div><b>Delivering in 8 mins</b><div class="pq">${count()} item${count()>1?'s':''}</div></div></div>
-     ${ids.map(id=>{const p=P(id);return `<div class="cart-item"><img src="${p.img}" alt=""><div class="m"><div class="pn">${p.name}</div><div class="pq">${p.qty}</div><div class="price" style="margin-top:4px"><b>${inr(p.price*cart[id])}</b><span class="mrp">${inr(p.mrp*cart[id])}</span></div></div>
+     ${ids.map(id=>{const p=P(id);return `<div class="cart-item"><img src="${p.img}" alt="" decoding="async" width="54" height="54"><div class="m"><div class="pn">${p.name}</div><div class="pq">${p.qty}</div><div class="price" style="margin-top:4px"><b>${inr(p.price*cart[id])}</b><span class="mrp">${inr(p.mrp*cart[id])}</span></div></div>
        <div class="stepper" data-id="${id}"><button data-act="dec">${ic('minus',14)}</button><span>${cart[id]}</span><button data-act="inc">${ic('plus',14)}</button></div></div>`}).join('')}</div>
    <div class="card" style="margin:12px 14px 0;padding:12px"><div class="row" style="align-items:flex-start">${ic('pin',20,'gico')}<div style="flex:1;min-width:0">${ad?`<b>Delivering to ${esc(ad.label)} · ${esc(ad.area)}</b><div class="pq" style="font-size:12px">${esc(addrLine(ad))}</div>`:`<b>No delivery address</b><div class="pq" style="font-size:12px">Add where we should deliver</div>`}</div><button class="link" data-act="addr">${ad?'Change':'Add'}</button></div></div>
    ${cash>0?`<button class="card li" style="margin:12px 14px 0;width:calc(100% - 28px)" data-act="usecash">${ic('wallet',20)}<span>Use Freshly cash<small>Balance ${inr(cash)}</small></span><span class="sw ${useCash?'on':''}"></span></button>`:''}
@@ -212,6 +214,13 @@ function chrome(route){
   else bar.innerHTML='';
 }
 
+/* Leaflet is only fetched when a map page is opened (saves RAM + startup time) */
+let _lp=null;
+function loadLeaflet(){if(window.L)return Promise.resolve();if(_lp)return _lp;
+  _lp=new Promise(res=>{const c=document.createElement('link');c.rel='stylesheet';c.href='lib/leaflet.css';document.head.appendChild(c);
+    const s=document.createElement('script');s.src='lib/leaflet.js';s.onload=res;s.onerror=()=>{_lp=null;res()};document.head.appendChild(s)});return _lp}
+let _tok=0;
+
 /* router */
 let route='home';
 const HIDE=['location'], PROF=['profile','addresses','orders','wishlist','editprofile','wallet','giftcards','rewards','payments','refunds','review','suggest','notifications','help','info'];
@@ -226,9 +235,10 @@ function render(){
   chrome(route);
   $('#view').style.paddingBottom=route=='location'?'0':(route=='product'||route=='cart')?'175px':'';
   scrollTo(0,0);
-  after[route]&&after[route](a);
+  const fn=after[route],tok=++_tok;
+  if(fn){if(route=='location'||route=='order')loadLeaflet().then(()=>{if(tok==_tok)fn(a)});else fn(a)}
 }
-addEventListener('hashchange',render);
+addEventListener('hashchange',()=>requestAnimationFrame(render));
 
 /* refresh counts in place (no scroll jump) */
 function refresh(){
@@ -248,9 +258,9 @@ function openSearch(){
   const res=$('#res'),q=$('#q');
   const sug=()=>res.innerHTML=`<div class="chips">${['Milk','Tomato','Atta','Banana','Eggs','Paneer'].map(x=>`<button class="chip" data-q="${x}">${x}</button>`).join('')}</div>`;
   sug();q.focus();
-  q.oninput=()=>{const v=q.value.trim().toLowerCase();if(!v)return sug();
+  let _st;q.oninput=()=>{clearTimeout(_st);_st=setTimeout(doS,90)};const doS=()=>{const v=q.value.trim().toLowerCase();if(!v)return sug();
     const r=PRODUCTS.filter(p=>p.name.toLowerCase().includes(v)||p.cat.includes(v)||CATEGORIES.find(c=>c.slug==p.cat).name.toLowerCase().includes(v));
-    res.innerHTML=r.length?`<div class="sec" style="padding-top:12px"><div class="grid2">${r.map(card).join('')}</div></div>`:`<div class="none">No results for "${q.value}"</div>`}
+    res.innerHTML=r.length?`<div class="sec" style="padding-top:12px"><div class="grid2">${r.map(card).join('')}</div></div>`:`<div class="none">No results for "${esc(q.value)}"</div>`}
 }
 function addrCard(a,sheet){
   const on=a.id==curAddr()?.id;
@@ -286,7 +296,7 @@ function orderInit(id){
     document.querySelectorAll('#osteps .stp').forEach((e,i)=>e.classList.toggle('on',i<=st.s));
     if(st.s==3){const e=$('#oeta');if(e)e.innerHTML='';if(!o2.done){o2.done=1;pts+=0;kvs('orders',orders)}}
   };
-  tick();timers.push(setInterval(tick,1000));
+  tick();timers.push(setInterval(()=>{if(!document.hidden)tick()},window.LITE?2000:1000));
 }
 
 function placeOrder(method){
@@ -316,7 +326,7 @@ document.addEventListener('click',e=>{
     else if(act=='order')placeOrder(a.dataset.m);
     else if(act=='reorder'){const o=orders.find(x=>x.id==id);o.items.forEach(x=>cart[x.id]=(cart[x.id]||0)+x.qty);save();location.hash='#/cart'}
     else if(act=='cancel'){if(confirm('Cancel this order?')){const o=orders.find(x=>x.id==id);o.cancelled=true;kvs('orders',orders);render();toast('Order cancelled')}}
-    else if(act=='logout'){if(confirm('Log out?')){['cart','favs','orders','user','addrs','selAddr'].forEach(k=>localStorage.removeItem(k));location.hash='#/';location.reload()}}
+    else if(act=='logout'){if(confirm('Log out?')){cart={};favs=[];['cart','favs','orders','user','addrs','selAddr'].forEach(k=>localStorage.removeItem(k));location.hash='#/';location.reload()}}
     else if(act=='saveprofile'){const n=$('#pn').value.trim(),p=$('#pp').value.trim();if(!n||p.replace(/\D/g,'').length<10){toast('Enter name and valid mobile');return}user={name:n,phone:p,email:$('#pe').value.trim()};kvs('user',user);toast('Profile updated');history.back()}
     else if(act=='redeem'){const c=$('#gc').value.trim().toUpperCase();const g=gifts.find(x=>x.code==c&&!x.used);
       if(redeemed.includes(c))toast('Code already used');else if(c=='FRESH50'||g){cash+=g?g.amt:50;if(g)g.used=1;redeemed.push(c);kvs('cash',cash);kvs('redeemed',redeemed);kvs('gifts',gifts);toast('Added to Freshly cash');render()}else toast('Invalid code')}
@@ -337,11 +347,15 @@ document.addEventListener('click',e=>{
 render();
 
 /* auto-hide top bar (profile + location): down = hide, up = show */
-(()=>{let last=scrollY,tk=false;
+(()=>{let last=scrollY,tk=false,bar=null,away=false;
+  const setAway=v=>{if(!bar||!bar.isConnected)bar=document.querySelector('.hero,.top');if(bar&&v!==away){bar.classList.toggle('away',v);away=v}};
   addEventListener('scroll',()=>{if(tk)return;tk=true;requestAnimationFrame(()=>{
     const y=Math.max(0,scrollY),d=y-last;
-    if(Math.abs(d)>6){const hide=d>0&&y>90;document.querySelectorAll('.hero,.top').forEach(e=>e.classList.toggle('away',hide));last=y}
-    if(y<=10)document.querySelectorAll('.hero,.top').forEach(e=>e.classList.remove('away'));
+    if(Math.abs(d)>6){setAway(d>0&&y>90);last=y}
+    if(y<=10)setAway(false);
     tk=false})},{passive:true});
+  addEventListener('hashchange',()=>{bar=null;away=false});
   addEventListener('hashchange',()=>{last=0});
 })();
+
+if('serviceWorker' in navigator&&(location.protocol=='https:'||location.hostname=='localhost'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
