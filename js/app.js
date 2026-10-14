@@ -60,7 +60,7 @@ shop(slug){
   const c=CATEGORIES.find(x=>x.slug==slug)||{name:'All products',slug:'all'};
   const list=slug=='all'?PRODUCTS:PRODUCTS.filter(p=>p.cat==slug);
   return `${pageTop(c.name,`<button class="ib" data-act="search" aria-label="Search">${ic('search',18)}</button>`)}
-   <div class="tabs"><a class="tab ${slug=='all'?'on':''}" href="#/shop/all">All</a>${CATEGORIES.map(x=>`<a class="tab ${x.slug==slug?'on':''}" href="#/shop/${x.slug}">${x.name}</a>`).join('')}</div>
+   <div class="tabs"><a class="tab ${slug=='all'?'on':''}" href="#/shop/all">${ic('all',16)}<span>All</span></a>${CATEGORIES.map(x=>`<a class="tab ${x.slug==slug?'on':''}" href="#/shop/${x.slug}">${ic(x.slug,16)}<span>${x.name}</span></a>`).join('')}</div>
    <div class="sec" style="padding-top:12px"><div class="grid2">${list.map(card).join('')}</div></div>`},
 
 product(id){
