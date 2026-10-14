@@ -1,5 +1,5 @@
 /* free map tiles: CARTO Voyager (OpenStreetMap data), no API key */
-const tiles=()=>L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,attribution:'© OpenStreetMap · © CARTO'});
+const tiles=()=>L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}'+(window.LITE?'':'{r}')+'.png',{subdomains:'abcd',maxZoom:19,keepBuffer:1,updateWhenIdle:true,updateWhenZooming:false,attribution:'© OpenStreetMap · © CARTO'});
 
 /* ---------- storage helpers ---------- */
 const kv=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}};
@@ -56,7 +56,7 @@ function locInit(arg){
   const e=arg&&arg!='new'?addrs.find(a=>a.id==arg):null;
   const ca=curAddr();
   const start=e?{lat:e.lat,lng:e.lng}:(ca?{lat:ca.lat,lng:ca.lng}:DEF_LOC);
-  const map=LOCMAP=L.map('map',{zoomControl:false}).setView([start.lat,start.lng],e||ca?17:13);
+  const map=LOCMAP=L.map('map',{zoomControl:false,zoomAnimation:!window.LITE,fadeAnimation:!window.LITE,markerZoomAnimation:!window.LITE}).setView([start.lat,start.lng],e||ca?17:13);
   L.control.zoom({position:'bottomright'}).addTo(map);
   tiles().addTo(map);
   let cur={lat:start.lat,lng:start.lng,area:e?.area||'',city:e?.city||'',pincode:e?.pincode||'',full:e?.full||''},seq=0,ctl=null,tmr=null,accC=null,label=e?e.label:'Home';
