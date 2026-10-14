@@ -358,4 +358,12 @@ render();
   addEventListener('hashchange',()=>{last=0});
 })();
 
+/* banner auto-scroll: every 3.5s, loops back to first, pauses 6s after touch/wheel */
+(function(){let hold=0;const h=()=>{hold=Date.now()+6000};
+  ['touchstart','pointerdown','wheel'].forEach(e=>addEventListener(e,h,{passive:true}));
+  setInterval(()=>{const b=document.querySelector('.banners');
+    if(!b||!b.firstElementChild||document.hidden||Date.now()<hold||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+    const max=b.scrollWidth-b.clientWidth,step=b.firstElementChild.offsetWidth+10;
+    b.scrollTo({left:b.scrollLeft>=max-4?0:b.scrollLeft+step,behavior:'smooth'})},3500)})();
+
 if('serviceWorker' in navigator&&(location.protocol=='https:'||location.hostname=='localhost'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
