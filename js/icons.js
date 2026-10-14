@@ -33,6 +33,13 @@ receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
 phone:'<path d="M5 4h4l2 5-2.500 1.500a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/>',
 mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
 shield:'<path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/>',
-check:'<path d="M5 12l5 5 9-10"/>'
+check:'<path d="M5 12l5 5 9-10"/>',
+all:'<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>',
+veg:'<path d="M12 21c-4 0-7-3-7-7 0-3 2-6 7-9 5 3 7 6 7 9 0 4-3 7-7 7z"/><path d="M12 5c0-2 1-3 3-3"/><path d="M9 13c1 1 2 1 3 1"/>',
+fruit:'<path d="M12 8c-3-2-7 0-7 5 0 4 3 8 7 8s7-4 7-8c0-5-4-7-7-5z"/><path d="M12 8c0-3 1-5 4-6"/>',
+dairy:'<path d="M9 2h6v3l2 3v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8l2-3z"/><path d="M7 12h10"/>',
+staples:'<path d="M7 8h10l2 12H5z"/><path d="M8 8c0-2 1-4 4-4s4 2 4 4"/><path d="M9 14h6"/>',
+snacks:'<path d="M5 8c2-2 12-2 14 0l-1 12c-3 1.5-9 1.5-12 0z"/><path d="M5 8c2 2 12 2 14 0"/><path d="M10 13l2 2 2-2"/>',
+drinks:'<path d="M7 3h10l-1.5 17a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1z"/><path d="M7.5 9h9"/><path d="M13 3l2-2"/>'
 };
 function ic(n,s=20,c=''){return `<svg class="ic ${c}" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]||""}</svg>`}
